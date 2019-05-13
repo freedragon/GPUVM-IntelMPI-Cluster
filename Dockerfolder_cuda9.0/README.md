@@ -31,3 +31,18 @@ $ cat /etc/dat.conf | head -n 21 | tail -n 1
 ```bash
 $ mpirun -ppn 4 -n 8 -host 10.2.1.4,10.2.1.5 -env I_MPI_DEBUG=9 -env I_MPI_HYDRA_DEBUG=on -env CUDA_VISIBLE_DEVICES=0,1,2,3 -env I_MPI_FABRICS=dapl -env I_MPI_DAPL_PROVIDER=ofa-v2-ib0 -env I_MPI_DYNAMIC_CONNECTION=0 python tensorflow_mnist_estimator.py
 ```
+
+Command lines to run container and test traing session.
+```
+docker build -t hvd-cuda9.0 .
+
+nvidia-docker run -d --device=/dev/infiniband/rdma_cm --device=/dev/infiniband/uverbs0 --net=host -v ~/docker:/workspace --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 --name cuda9image hvd-cuda9.0
+
+docker exec -it cuda9image /bin/bash
+
+cd ~
+./update_ib0_ip.sh
+cat /etc/dat.conf | head -n 21 | tail -n 1
+
+mpirun -ppn 4 -n 8 -host 10.0.1.4,10.0.1.5 -env I_MPI_DEBUG=9 -env I_MPI_HYDRA_DEBUG=on -env I_MPI_FABRICS=shm:dapl -env I_MPI_DAPL_PROVIDER=ofa-v2-ib0 -env I_MPI_DYNAMIC_CONNECTION=0 python tensorflow_mnist_estimator.py
+```
