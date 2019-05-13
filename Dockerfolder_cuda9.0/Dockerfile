@@ -73,10 +73,13 @@ RUN cd /tmp \
 COPY ssh_config /root/.ssh/config
 COPY id_rsa /root/.ssh/id_rsa
 COPY id_rsa.pub /root/.ssh/id_rsa.pub
+
+# Added sed modification for PermitRootLogin. (3rd)
 RUN mkdir -p /var/run/sshd \
     && ssh-keygen -A \
     && sed -i 's/UsePAM yes/UsePAM no/g' /etc/ssh/sshd_config \
     && sed -i 's/#PermitRootLogin yes/PermitRootLogin yes/g' /etc/ssh/sshd_config \
+    && sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config \
     && sed -i 's/#RSAAuthentication yes/RSAAuthentication yes/g' /etc/ssh/sshd_config \
     && sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/g' /etc/ssh/sshd_config \
     && chmod 600 /root/.ssh/id_rsa \
