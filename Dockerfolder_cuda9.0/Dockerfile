@@ -1,3 +1,5 @@
+# FROM nvidia/9.2-cudnn7-devel-ubuntu16.04
+# FROM nvidia/9.2-devel-ubuntu16.04
 FROM nvidia/cuda:9.0-devel-ubuntu16.04
 # Based on default horovod image
 
