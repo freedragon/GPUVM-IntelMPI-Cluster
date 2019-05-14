@@ -111,23 +111,23 @@ RUN PY=$(echo ${PYTHON_VERSION} | sed s/\\.//); \
 
 # Install Dependencies
 RUN pip install --no-cache-dir h5py scipy jupyter ipykernel numpy toolz pandas \
-    scikit-learn pillow
+    scikit-learn pillow  ruamel.yaml
 
 # Install Horovod, temporarily using CUDA stubs
 RUN ldconfig /usr/local/cuda-9.0/targets/x86_64-linux/lib/stubs && \
         /bin/bash -c "source /opt/intel/impi/2017.2.174/bin64/mpivars.sh" && \
     # HOROVOD_GPU_ALLREDUCE=NCCL HOROVOD_WITH_TENSORFLOW=1 pip install --no-cache-dir horovod==0.13.2 && \
-    HOROVOD_WITH_TENSORFLOW=1 pip install --no-cache-dir horovod==0.13.2 && \
+    HOROVOD_WITH_TENSORFLOW=1 pip install --no-cache-dir horovod==0.15.2 && \
     ldconfig
 
 # Set default NCCL parameters
 RUN echo NCCL_DEBUG=INFO >> /etc/nccl.conf && \
     echo NCCL_SOCKET_IFNAME=^docker0 >> /etc/nccl.conf
 
-# Download benchmarks
-RUN git clone https://github.com/tensorflow/benchmarks && \
-    cd benchmarks && \
-    git checkout 3b90c14fb2bf02ca5d27c188aee878663229a0a7
+# Download benchmarks (Produce some errors. Commented out)
+# RUN git clone https://github.com/tensorflow/benchmarks && \
+#     cd benchmarks && \
+#     git checkout 3b90c14fb2bf02ca5d27c188aee878663229a0a7
 
 # Update ib0 ip address with eth1 address in /etc/dat.conf 
 COPY update_ib0_ip.sh /root/update_ib0_ip.sh
