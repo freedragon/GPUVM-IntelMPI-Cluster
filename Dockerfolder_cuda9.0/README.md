@@ -43,6 +43,9 @@ docker exec -it cuda9image /bin/bash
 cd ~
 ./update_ib0_ip.sh
 cat /etc/dat.conf | head -n 21 | tail -n 1
-
+# Buffered output
 mpirun -ppn 4 -n 8 -host 10.0.1.4,10.0.1.5 -env I_MPI_DEBUG=9 -env I_MPI_HYDRA_DEBUG=on -env I_MPI_FABRICS=shm:dapl -env I_MPI_DAPL_PROVIDER=ofa-v2-ib0 -env I_MPI_DYNAMIC_CONNECTION=0 python tensorflow_mnist_estimator.py
+
+# Non-buffer (unbuffered from python's world) output
+mpirun -ppn 4 -n 8 -host 10.0.1.6,10.0.1.7 -env I_MPI_DEBUG=9 -env I_MPI_HYDRA_DEBUG=on -env I_MPI_FABRICS=shm:dapl -env I_MPI_DAPL_PROVIDER=ofa-v2-ib0 -env I_MPI_DYNAMIC_CONNECTION=0 -env PYTHONUNBUFFERED=1 python -u tensorflow_mnist_estimator.py
 ```
